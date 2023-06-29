@@ -1,6 +1,6 @@
 {% extends "base.njk" %}
 
-{% block red %}
+{% block main %}
   <h1 class="something">{{title}}</h1>
   <h2>
     {{nested.variable}}
@@ -21,8 +21,4 @@
       <li>{{fruit}}</li>
     {% endfor %}
   </ul>
-{% endblock %}
-
-{% block blue %}
-  BLUE BLOCK
 {% endblock %}

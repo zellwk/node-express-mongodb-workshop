@@ -1,0 +1,13 @@
+label {
+  display: block;
+}
+
+label > span {
+  display: block;
+}
+
+form {
+  > * + * {
+    margin-top: 1rem;
+  }
+}

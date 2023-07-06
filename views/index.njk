@@ -1,24 +1,28 @@
-{% extends "base.njk" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Hello World</h1>
 
-{% block main %}
-  <h1 class="something">{{title}}</h1>
-  <h2>
-    {{nested.variable}}
-  </h2>
+    <p>Please login with the following form </p>
 
-  {# Conditional Statement #}
-  <p>
-    {% if numUsers < 5 %} 
-        Num users is less than 5 
-      {% else  %} 
-        Num users is more than 5 
-      {% endif %}
-  </p>
+    <form action="/login">
+      <label for="">
+        <span>Email address</span>
+        <input type="email" name="email" >
+      </label>
 
-  {# Loops #}
-  <ul>
-    {% for fruit in fruitsBasket %}
-      <li>{{fruit}}</li>
-    {% endfor %}
-  </ul>
-{% endblock %}
+      <label for="">
+        <span>Password</span>
+        <input type="password" name="password" >
+      </label>
+
+      <button type="submit">Login</button>
+    </form>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

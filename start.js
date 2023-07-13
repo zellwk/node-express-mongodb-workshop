@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import server from './server.js'
 
 const db = mongoose.connection
-const dbUrl = 'mongodb://localhost:27017/test'
+const dbUrl = 'mongodb://localhost:27017/node-express-mongodb-project'
 
 mongoose.connect(dbUrl)
 

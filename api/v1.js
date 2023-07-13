@@ -1,15 +1,21 @@
+import {
+  createUser,
+  deleteUser,
+  getUserById,
+  updateUser,
+} from '../src/user/user.controller.js'
+
 import { Router } from 'express'
 
 const router = Router()
 
-// GET /api/v1
-router.get('/', (req, res) => {
-  console.log('test v1')
-})
+// Generic Structure of an API:
+// https://docs.google.com/document/d/1X2DhRB-MvaiscurQXVt6ycMutauOu1m-kLWFIpjTnMI/edit
 
-// GET /api/v1/test
-router.post('/login', (req, res) => {
-  res.json({ message: 'Hello' })
-})
+// User Route
+router.get('/users/:id', getUserById)
+router.post('/user', createUser)
+router.put('/users/:id', updateUser)
+router.delete('/users/:id', deleteUser)
 
 export default router

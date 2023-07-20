@@ -7,8 +7,13 @@ export async function getUserById(req, res) {
 }
 
 export async function createUser(req, res) {
-  const { firstName, lastName, email } = req.body
-  const user = await userService.createUser({ firstName, lastName, email })
+  const { firstName, lastName, password, email } = req.body
+  const user = await userService.createUser({
+    firstName,
+    lastName,
+    password,
+    email,
+  })
 
   return res.json(user)
 }
@@ -33,4 +38,10 @@ export async function deleteUser(req, res) {
   const user = await userService.deleteUser(id)
 
   return res.json({ message: 'User deleted', user })
+}
+
+export async function login(req, res) {
+  const { user, token } = req.locals
+
+  return res.json({ user, token })
 }

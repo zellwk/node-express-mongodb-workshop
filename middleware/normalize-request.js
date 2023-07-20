@@ -16,3 +16,6 @@ export function normalizeRequest(req, res, next) {
 
   next()
 }
+
+// Middleware =
+// A function that gets and transforms the request or does certain kinds of checks before passing into the actual controller

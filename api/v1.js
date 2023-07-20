@@ -2,10 +2,12 @@ import {
   createUser,
   deleteUser,
   getUserById,
+  login,
   updateUser,
 } from '../src/user/user.controller.js'
 
 import { Router } from 'express'
+import { authenticate } from '../src/user/auth.middleware.js'
 
 const router = Router()
 
@@ -17,5 +19,7 @@ router.get('/users/:id', getUserById)
 router.post('/user', createUser)
 router.put('/users/:id', updateUser)
 router.delete('/users/:id', deleteUser)
+
+router.post('/login', authenticate, login)
 
 export default router

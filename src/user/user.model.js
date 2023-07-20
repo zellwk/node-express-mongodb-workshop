@@ -8,7 +8,12 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     lowercase: true,
+    required: true,
     trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
   },
 })
 
@@ -16,6 +21,7 @@ userSchema.set('toJSON', {
   transform(doc, ret) {
     ret._id = ret._id.toString()
     delete ret.__v
+    delete ret.password
     return ret
   },
 })

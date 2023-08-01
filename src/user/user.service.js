@@ -25,14 +25,12 @@ export async function createUser({ firstName, lastName, password, email }) {
   if (!email) throw createError(400, 'Email is required')
   if (!password) throw createError(400, 'Password is required')
 
-  try {
-    const existing = await getUserByEmail(email)
-    if (existing) throw createError(400, 'Email already exists')
-  } catch (e) {}
+  const exists = await User.findOne({ email })
+  if (exists) throw createError(400, 'Email is already taken')
 
   const hashedPassword = await hashPassword(password)
 
-  const user = await User.create({
+  const user = new User({
     firstName,
     lastName,
     password: hashedPassword,
@@ -61,6 +59,7 @@ export async function login(email, password) {
   const user = await getUserByEmail(email)
 
   const match = await bcrypt.compare(password, user.password)
+
   if (!match) throw createError(401, 'Password is incorrect')
 
   return user

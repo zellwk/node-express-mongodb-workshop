@@ -14,6 +14,11 @@ const router = Router()
 // Generic Structure of an API:
 // https://docs.google.com/document/d/1X2DhRB-MvaiscurQXVt6ycMutauOu1m-kLWFIpjTnMI/edit
 
+// Litmus
+router.use('/litmus', (req, res) => {
+  res.json({ message: 'hello world' })
+})
+
 // User Route
 router.get('/users/:id', getUserById)
 router.post('/user', createUser)

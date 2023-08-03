@@ -7,6 +7,8 @@ export function buildReq(args) {
   return {
     body: {},
     params: {},
+    headers: {},
+    locals: {},
     ...args,
   }
 }
@@ -15,6 +17,7 @@ export function buildRes() {
   return {
     json: vi.fn(),
     status: vi.fn(),
+    render: vi.fn(),
   }
 }
 

@@ -4,10 +4,16 @@ import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 
-export async function getUserById(id) {
-  if (typeof id === 'string') {
-    id = new mongoose.Types.ObjectId(id)
+function getMongooseID(id) {
+  try {
+    return new mongoose.Types.ObjectId(id)
+  } catch (e) {
+    throw createError(400, 'Invalid ID')
   }
+}
+
+export async function getUserById(id) {
+  if (typeof id === 'string') id = getMongooseID(id)
 
   const user = await User.findOne({ _id: id })
   if (!user) throw createError(404, 'User is not found')

@@ -1,8 +1,11 @@
 import {
+  beginResetPassword,
+  changePassword,
   createUser,
   deleteUser,
   getUserById,
   login,
+  resetPassword,
   updateUser,
 } from '../src/user/user.controller.js'
 
@@ -26,5 +29,9 @@ router.put('/users/:id', updateUser)
 router.delete('/users/:id', deleteUser)
 
 router.post('/login', authenticate, login)
+router.post('/change-password', changePassword)
+
+router.post('/reset-password', beginResetPassword)
+router.post('/reset-password/change', resetPassword)
 
 export default router

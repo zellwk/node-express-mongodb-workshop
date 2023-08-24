@@ -1,4 +1,6 @@
-import { expect, it } from 'vitest'
+import 'dotenv/config'
+
+import { describe, expect, it } from 'vitest'
 import { setupDB, setupServer } from '../tests/setup.js'
 import zlFetch, { createZlFetch } from 'zl-fetch'
 
@@ -6,7 +8,7 @@ import { buildUser } from '../tests/builds/user.js'
 
 setupDB()
 const url = setupServer()
-const api = createZlFetch(`${url}/api/v1/`, { returnError: true })
+const api = createZlFetch(`${url}/api/v1/`, { returnError: true, debug: true })
 
 it('Create and GET User', async _ => {
   // Creating a user
@@ -33,7 +35,7 @@ it('Create and GET User', async _ => {
 })
 
 it(`User doesn't exist`, async _ => {
-  const { response, error } = await api(`users/${123123}`)
+  const { response, error, debug } = await api(`users/${123123}`)
 
   expect(response).toBe(null)
   expect(error).toBeTruthy()
@@ -42,4 +44,37 @@ it(`User doesn't exist`, async _ => {
   expect(status).toBe(400)
   expect(body.message).toMatch(/Invalid ID/)
   expect(body.message).toMatchInlineSnapshot('"Invalid ID"')
+})
+
+it('Password Reset Flow', async _ => {
+  // Setup for the test
+  const u = buildUser()
+  await api.post(`/user`, { body: u })
+
+  // Begin the testing process
+  const { response } = await api.post('/reset-password', {
+    body: { email: u.email },
+  })
+
+  // ONE MORE STEP: Mock the email service
+  const resetToken = response.body.user.passwordResetToken
+
+  const { response: response2, error: error2 } = await api.post(
+    'reset-password/change',
+    {
+      body: {
+        newPassword: 'newPassword',
+        confirmPassword: 'newPassword',
+        passwordResetToken: resetToken,
+      },
+    }
+  )
+
+  // Be able to login with the new password
+  const r3 = await api.post('/login', {
+    auth: { username: u.email, password: 'newPassword' },
+  })
+
+  const loggedInUser = r3.response.body.user
+  expect(loggedInUser.firstName).toBeTruthy()
 })

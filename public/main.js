@@ -6,7 +6,6 @@ const form = document.querySelector('form')
 
 form.addEventListener('submit', async event => {
   event.preventDefault()
-
   const data = new FormData(form)
 
   const response = await zlFetch.post('http://localhost:3000/api/v1/user', {

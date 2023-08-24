@@ -26,11 +26,13 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1', (await import('./api/v1.js')).default)
 
+// Handle 404
 app.use((req, res, next) => {
   console.log(`Not Found: ${req.originalUrl}`)
   return res.status(404).render('404')
 })
 
+// Error Handler
 app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.json({

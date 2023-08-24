@@ -26,6 +26,12 @@ export async function getUserByEmail(email) {
   return user
 }
 
+export async function getUserByPasswordResetToken(token) {
+  const user = await User.findOne({ passwordResetToken: token })
+  if (!user) throw createError(404, 'User is not found')
+  return user
+}
+
 // Creates a user
 export async function createUser({ firstName, lastName, password, email }) {
   if (!email) throw createError(400, 'Email is required')
@@ -63,10 +69,7 @@ export async function deleteUser(id) {
 // Login functionality
 export async function login(email, password) {
   const user = await getUserByEmail(email)
-
-  const match = await bcrypt.compare(password, user.password)
-
-  if (!match) throw createError(401, 'Password is incorrect')
+  await verifyPassword(password, user.password)
 
   return user
 }
@@ -87,4 +90,84 @@ export async function decodeAccessToken(token) {
   } catch (error) {
     throw createError(401, 'Invalid token')
   }
+}
+
+// ========================
+// Password Functionality
+// ========================
+async function verifyPassword(password, hashedPassword) {
+  const match = await bcrypt.compare(password, hashedPassword)
+  if (!match) throw createError(401, 'Password is incorrect')
+  return match
+}
+
+export async function changePassword({
+  user,
+  currentPassword,
+  newPassword,
+  confirmPassword,
+}) {
+  if (!currentPassword) {
+    throw createError(400, 'Current password is required')
+  }
+
+  if (currentPassword !== user.password) {
+    await verifyPassword(currentPassword, user.password)
+  }
+
+  if (!newPassword) {
+    throw createError(400, 'New password is required')
+  }
+
+  if (!confirmPassword) {
+    throw createError(400, 'Password confirmation is required')
+  }
+
+  if (currentPassword === newPassword) {
+    throw createError(
+      400,
+      'New password must be different from the current password.'
+    )
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw createError(
+      400,
+      'New password and password confirmation do not match.'
+    )
+  }
+
+  const hashedPassword = await hashPassword(newPassword)
+  user.password = hashedPassword
+
+  const updated = await user.save()
+
+  return updated
+}
+
+// ========================
+// Reset Password Functionality
+// ========================
+// We just want to send out an email message here
+export async function createResetPasswordToken(email) {
+  const user = await getUserByEmail(email)
+
+  const options = { expiresIn: '24h' }
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, options)
+  user.passwordResetToken = token
+
+  return user.save()
+}
+
+export async function verifyToken(token) {
+  const decoded = await decodeAccessToken(token)
+  const { id, exp } = decoded
+
+  // Not expired yet
+  if (exp * 1000 > Date.now()) {
+    const user = await getUserById(id)
+    return user
+  }
+
+  throw createError(401, 'Token is expired')
 }

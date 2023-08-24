@@ -45,3 +45,46 @@ export async function login(req, res) {
 
   return res.json({ user, token })
 }
+
+export async function changePassword(req, res) {
+  const { currentPassword, newPassword, confirmPassword, email } = req.body
+
+  const user = await userService.getUserByEmail(email)
+  const updated = await userService.changePassword({
+    currentPassword,
+    newPassword,
+    confirmPassword,
+    user,
+  })
+
+  res.json(user)
+}
+
+export async function beginResetPassword(req, res) {
+  const { email } = req.body
+
+  const user = await userService.createResetPasswordToken(email)
+  // Send out an email to the user with the link to reset the password
+  res.json({ user })
+}
+
+export async function resetPassword(req, res) {
+  const { newPassword, confirmPassword, passwordResetToken } = req.body
+
+  const user = await userService.getUserByPasswordResetToken(passwordResetToken)
+
+  // I didn't check whether this line works yet...
+  const decoded = await userService.verifyToken(passwordResetToken)
+
+  // This works...
+  const updated = await userService.changePassword({
+    user,
+    currentPassword: user.password,
+    newPassword,
+    confirmPassword,
+  })
+
+  // Remove password reset token from user
+
+  res.json(ready)
+}

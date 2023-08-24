@@ -15,6 +15,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  passwordResetToken: String,
 })
 
 userSchema.set('toJSON', {
